@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Time Management App</title>
+
+ 
+  <link rel="icon" href="time.png" type="image/png">
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 480px;
+      margin: 50px auto;
+      padding: 25px 30px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 30px;
+      letter-spacing: 1.2px;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    input, button {
+      padding: 14px 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      outline-offset: 2px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input {
+      background-color: #f0f0f0;
+      color: #333;
+    }
+
+    input:focus {
+      box-shadow: 0 0 8px #a8bfff;
+    }
+
+    button {
+      background-color: #ff6f91;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #ff4b6e;
+      box-shadow: 0 4px 10px rgba(255, 75, 110, 0.6);
+    }
+
+    .timer {
+      margin-top: 25px;
+      font-size: 26px;
+      font-weight: 700;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+      user-select: none;
+    }
+
+    .activity-list {
+      margin-top: 30px;
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .activity-list li {
+      background-color: rgba(255, 255, 255, 0.15);
+      margin-bottom: 12px;
+      padding: 14px 20px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: background-color 0.3s ease;
+    }
+
+    .activity-list li.running {
+      background-color: #ff6f91;
+      box-shadow: 0 4px 15px rgba(255, 111, 145, 0.7);
+      color: white;
+    }
+
+    .delete-btn {
+      background: #e63946;
+      border: none;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 2px 6px rgba(230, 57, 70, 0.6);
+      transition: background-color 0.3s ease;
+      margin-left: 20px;
+      flex-shrink: 0;
+    }
+
+    .delete-btn:hover {
+      background-color: #b22a31;
+      box-shadow: 0 4px 10px rgba(178, 42, 49, 0.8);
+    }
+
+    footer {
+      margin-top: 40px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      text-align: center;
+      color: #ddd;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+
+    footer a {
+      color: #ff6f91;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: #ff4b6e;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 500px) {
+      body {
+        margin: 20px;
+        padding: 20px;
+      }
+
+      input, button {
+        font-size: 0.9rem;
+      }
+
+      .timer {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Time Management</h1>
+
+  <form id="activityForm">
+    <input type="text" id="activityName" placeholder="Enter your activity" required />
+    <input type="number" id="activityHours" placeholder="Hours" min="0" value="0" />
+    <input type="number" id="activityMinutes" placeholder="Minutes" min="0" max="59" value="0" />
+    <input type="number" id="activitySeconds" placeholder="Seconds" min="0" max="59" value="0" />
+    <button type="submit">Start Activity</button>
+  </form>
+
+  <div class="timer" id="timerDisplay">Timer: 0 seconds</div>
+
+  <ul class="activity-list" id="activityList"></ul>
+
+  <audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
+
+  <footer>
+    <p>
+      Designed by <strong>Mukunzi Joseph</strong><br />
+      Email: <a href="https://mail.google.com/mail/u/0/#inbox">send email to jmukunzi2009@gmail.com</a><br />
+      Instagram: <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">Instagram is m_u_k.u.n.z.i</a>
+    </p>
+  </footer>
+
+  <script>
+    const form = document.getElementById('activityForm');
+    const activityNameInput = document.getElementById('activityName');
+    const hoursInput = document.getElementById('activityHours');
+    const minutesInput = document.getElementById('activityMinutes');
+    const secondsInput = document.getElementById('activitySeconds');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const activityList = document.getElementById('activityList');
+    const alarmSound = document.getElementById('alarmSound');
+
+    let countdown = null;
+    let timeLeft = 0;
+    let currentLi = null;
+
+    function formatTime(totalSeconds) {
+      const hrs = Math.floor(totalSeconds / 3600);
+      const mins = Math.floor((totalSeconds % 3600) / 60);
+      const secs = totalSeconds % 60;
+      return `${hrs}h ${mins}m ${secs}s`;
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Clear existing timer if running
+      if (countdown) {
+        clearInterval(countdown);
+        if (currentLi) {
+          currentLi.classList.remove('running');
+        }
+      }
+
+      const activityName = activityNameInput.value.trim();
+      const hrs = parseInt(hoursInput.value) || 0;
+      const mins = parseInt(minutesInput.value) || 0;
+      const secs = parseInt(secondsInput.value) || 0;
+
+      if (!activityName) {
+        alert('Please enter an activity name.');
+        return;
+      }
+
+      if (hrs < 0 || mins < 0 || secs < 0 || mins > 59 || secs > 59) {
+        alert('Please enter valid time values.');
+        return;
+      }
+
+      timeLeft = hrs * 3600 + mins * 60 + secs;
+
+      if (timeLeft <= 0) {
+        alert('Please enter a time greater than zero.');
+        return;
+      }
+
+      timerDisplay.textContent = `Timer: ${formatTime(timeLeft)}`;
+
+      // Create list item for activity
+      const li = document.createElement('li');
+      li.textContent = `Activity: ${activityName} - Duration: ${formatTime(timeLeft)}`;
+      li.classList.add('running');
+
+      // Create delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Delete';
+      deleteBtn.classList.add('delete-btn');
+      li.appendChild(deleteBtn);
+
+      activityList.appendChild(li);
+      currentLi = li;
+
+      // Start countdown
+      countdown = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `Timer: ${formatTime(timeLeft)}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(countdown);
+          countdown = null;
+          timerDisplay.textContent = "Time's up!";
+          li.classList.remove('running');
+
+          // Play alarm sound, handling potential play errors
+          alarmSound.play().catch(error => {
+            console.warn('Audio playback failed:', error);
+          });
+
+          alert(`Activity "${activityName}" is finished!`);
+        }
+      }, 1000);
+
+      
+      hoursInput.value = 0;
+      minutesInput.value = 0;
+      secondsInput.value = 0;
+    });
+
+   
+    activityList.addEventListener('click', (e) => {
+      if (e.target.classList.contains('delete-btn')) {
+        const li = e.target.parentElement;
+
+        
+        if (li === currentLi && countdown) {
+          clearInterval(countdown);
+          countdown = null;
+          timerDisplay.textContent = "Timer stopped.";
+        }
+
+        li.remove();
+      }
+    });
+  </script>
+</body>
+</html>
